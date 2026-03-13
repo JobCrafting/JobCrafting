@@ -1,10 +1,9 @@
-
 // Update to Firebase v9 modular syntax
 import { initializeApp, getApps } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyASqOOGEJTdWiV2KbUkAxb3VJS5PvDD9z4",
+  apiKey: process.env.FIREBASE_API_KEY || "",
   authDomain: "job-crafting.firebaseapp.com",
   projectId: "job-crafting",
   storageBucket: "job-crafting.firebasestorage.app",
@@ -13,8 +12,12 @@ const firebaseConfig = {
   measurementId: "G-0PVS7M6KQL"
 };
 
-// Initialize Firebase only if not already initialized
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+if (!firebaseConfig.apiKey) {
+  console.error("FIREBASE_API_KEY is not defined");
+}
 
-export const auth = getAuth(app);
+// Initialize Firebase only if not already initialized
+const app = firebaseConfig.apiKey ? (getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0]) : null;
+
+export const auth = app ? getAuth(app) : null;
 export const googleProvider = new GoogleAuthProvider();
